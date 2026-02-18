@@ -22,6 +22,9 @@ public class Expense {
         this.category = category;
         this.description = description;
     }
+    public String toFileFormat() {
+        return id + "," + date + "," + amount + "," + category + "," + description;
+    }
 
     // Getter untuk menampilkan data di laporan nanti
     @Override

@@ -2,6 +2,7 @@ package com.mycompany.expensetracker;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ExpenseTracker {
     private static ArrayList<Expense> expenseList = new ArrayList<>();
@@ -21,8 +22,11 @@ public class ExpenseTracker {
             System.out.println("1. Add Expense");
             System.out.println("2. View All Expense");
             System.out.println("3. Manage Categories");
-            System.out.println("4. Exit");
-            System.out.print("Choose an option (1-4): ");
+            System.out.println("4. Delete Expense");
+            System.out.println("5. Edit Expense");
+            System.out.println("6. Filter by Category");
+            System.out.println("7. Exit");
+            System.out.print("Choose an option (1-7): ");
             
             while (!scanner.hasNextInt()) { 
                 System.out.println("Error : Please enter a valid number!");
@@ -42,13 +46,22 @@ public class ExpenseTracker {
                     manageCategories();
                     break;
                 case 4:
+                    deleteExpense();
+                    break;
+                case 5:
+                    editExpense();
+                    break;
+                case 6:
+                    filterByCategory();
+                    break;
+                case 7:
                     saveToFile();
                     System.out.println("Thank You for using the application!");
                     break;
                 default:
                     System.out.println("Invalid choice! Please try again");
             }
-        } while (choice != 4);
+        } while (choice != 7);
     }
 
     private static void addExpense() {
@@ -56,7 +69,6 @@ public class ExpenseTracker {
         String date = scanner.nextLine();
         
         System.out.print("Enter Amount: ");
-        // Note : Input number only
         while (!scanner.hasNextDouble()) { 
             System.out.println("Error: Please enter a numeric value for the amount!");
             scanner.next();
@@ -68,7 +80,6 @@ public class ExpenseTracker {
         String category = scanner.nextLine();        
         System.out.print("Enter Description: ");
         String description = scanner.nextLine();
-
         // save expense data in a list
         expenseList.add(new Expense(idCounter++, date, amount, category, description));
         System.out.println("Expense recorded successfully!");
@@ -95,6 +106,56 @@ public class ExpenseTracker {
             categories.add(scanner.nextLine());
             System.out.println("Category added!"); // [cite: 178]
         }
+    }
+    private static void deleteExpense() {
+        viewExpenses();
+        System.out.print("Enter Expense ID to delete: ");
+        int id = scanner.nextInt();
+        boolean removed = expenseList.removeIf(e -> e.getId() == id);
+        
+        if (removed) {
+            saveToFile();
+            System.out.println("Expense ID " + id + " deleted successfully.");
+        } else {
+            System.out.println("ID not found.");
+        }
+    }
+
+    private static void editExpense() {
+        viewExpenses();
+        System.out.print("Enter Expense ID to edit: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        for (Expense e : expenseList) {
+            if (e.getId() == id) {
+                System.out.print("Enter New Amount (current: " + e.getAmount() + "): ");
+                e.setAmount(scanner.nextDouble());
+                scanner.nextLine();
+                System.out.print("Enter New Description: ");
+                e.setDescription(scanner.nextLine());
+                
+                saveToFile();
+                System.out.println("Expense updated successfully!");
+                return;
+            }
+        }
+        System.out.println("ID not found.");
+    }
+
+    private static void filterByCategory() {
+        System.out.print("Enter category to filter: ");
+        String cat = scanner.nextLine();
+        
+        System.out.println("\n--- Filtered Results for: " + cat + " ---");
+        boolean found = false;
+        for (Expense e : expenseList) {
+            if (e.getCategory().equalsIgnoreCase(cat)) {
+                System.out.println(e);
+                found = true;
+            }
+        }
+        if (!found) System.out.println("No records found for this category.");
     }
     private static void saveToFile() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {

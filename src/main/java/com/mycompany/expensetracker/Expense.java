@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.expensetracker;
-import java.util.Date;
 /**
  *
  * @author Joyce
@@ -22,6 +21,12 @@ public class Expense {
         this.category = category;
         this.description = description;
     }
+    public int getId() { return id; }
+    public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+    public String getCategory() { return category; }
+    public void setDescription(String description) { this.description = description; }
+    
     public String toFileFormat() {
         return id + "," + date + "," + amount + "," + category + "," + description;
     }

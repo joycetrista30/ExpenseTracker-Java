@@ -1,0 +1,2 @@
+1,24-02-2026,55000.0,Food,Lunch at canteen + drink
+3,24-02-2026,10000.0,Transport,Bus
